@@ -6,6 +6,7 @@
     class Cliente
     {
         #Atributos
+        private $aDatos;
         private $idCliente;
         private $nombre;
         private $direccion;
@@ -42,6 +43,7 @@
             $this->idCliente = 0;
             $this->nombre = "";
             $this->direccion = "";
+            $this->aDatos = new aDatos();
         }
         public function __destruct()
         {}
@@ -62,38 +64,33 @@
         #Metodos Publicos
         public function getCliente($idCliente)
         {
-            $aDatos = new aDatos();
             $sql = "select idCliente,nombre,Direccion from cliente where idCliente = ".$idCliente;
-            $listaClientes = $this->getListaCliente($aDatos->getDatos($sql));
+            $listaClientes = $this->getListaCliente($this->aDatos->getDatos($sql));
             $cliente = $listaClientes[0];
             return $cliente;
         }
         public function getClientes()
         {
-            $aDatos = new aDatos();
             $sql = "select idCliente,nombre,Direccion from cliente";
-            $listaClientes = $this->getListaCliente($aDatos->getDatos($sql));
+            $listaClientes = $this->getListaCliente($this->aDatos->getDatos($sql));
             return $listaClientes;
         }
-        public function Guardar()
+        public function guardar()
         {
-            $aDatos = new aDatos();
             $sql = "INSERT INTO cliente (nombre,Direccion) VALUES('$this->nombre','$this->direccion')";
-            $result = $aDatos->ejecutar($sql);
+            $result = $this->aDatos->ejecutar($sql);
             return $result;
         }
-        public function Modificar()
+        public function modificar()
         {
-            $aDatos = new aDatos();
-            $sql = "UPDATE cliente set nombre= '$this->nombre' Direccion= '$this->direccion' where idCliente = $this->idCliente";
-            $result = $aDatos->ejecutar($sql);
+            $sql = "UPDATE cliente set nombre= '$this->nombre', Direccion= '$this->direccion' where idCliente = $this->idCliente";
+            $result = $this->aDatos->ejecutar($sql);
             return $result;
         }
-        public function Eliminar()
+        public function eliminar()
         {
-            $aDatos = new aDatos();
             $sql = "DELETE from cliente where idCliente = $this->idCliente";
-            $result = $aDatos->ejecutar($sql);
+            $result = $this->aDatos->ejecutar($sql);
             return $result;
         }
     }

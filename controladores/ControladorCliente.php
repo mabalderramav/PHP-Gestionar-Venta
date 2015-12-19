@@ -1,25 +1,22 @@
 <?php
-    require_once 'vistas/VistaCliente.php';
 
     /**
     * Controlador para Clientes
     */
     class ControladorCliente
     {
-        private $vistaCliente;
         function __construct()
         {
-            $this->vistaCliente = new VistaCliente();
         }
 
         #Metodos
         public function listarClientes()
         {
-            $this->vistaCliente->getClientes();
+            require_once 'vistas/Cliente/VistaListarClientes.php';
         }
-        public function mostrarCliente($idCliente)
+        public function fromCliente()
         {
-            $this->vistaCliente->getCliente($idCliente);
+            require_once 'vistas/Cliente/VistaFromCliente.php';
         }
     }
 ?>

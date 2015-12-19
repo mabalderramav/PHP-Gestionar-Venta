@@ -11,8 +11,8 @@
 </head>
 <body>
     <?php
+        $controladorCliente->fromCliente();
         $controladorCliente->listarClientes();
-        $controladorCliente->mostrarCliente(1);
     ?>
 </body>
 </html>
