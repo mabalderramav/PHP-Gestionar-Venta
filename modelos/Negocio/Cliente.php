@@ -62,19 +62,6 @@
             return $listaAux;
         }
         #Metodos Publicos
-        public function getCliente($idCliente)
-        {
-            $sql = "select idCliente,nombre,Direccion from cliente where idCliente = ".$idCliente;
-            $listaClientes = $this->getListaCliente($this->aDatos->getDatos($sql));
-            $cliente = $listaClientes[0];
-            return $cliente;
-        }
-        public function getClientes()
-        {
-            $sql = "select idCliente,nombre,Direccion from cliente";
-            $listaClientes = $this->getListaCliente($this->aDatos->getDatos($sql));
-            return $listaClientes;
-        }
         public function guardar()
         {
             $sql = "INSERT INTO cliente (nombre,Direccion) VALUES('$this->nombre','$this->direccion')";
@@ -92,6 +79,19 @@
             $sql = "DELETE from cliente where idCliente = $this->idCliente";
             $result = $this->aDatos->ejecutar($sql);
             return $result;
+        }
+        public function getCliente($idCliente)
+        {
+            $sql = "select idCliente,nombre,Direccion from cliente where idCliente = ".$idCliente;
+            $listaClientes = $this->getListaCliente($this->aDatos->getDatos($sql));
+            $cliente = $listaClientes[0];
+            return $cliente;
+        }
+        public function getClientes()
+        {
+            $sql = "select idCliente,nombre,Direccion from cliente";
+            $listaClientes = $this->getListaCliente($this->aDatos->getDatos($sql));
+            return $listaClientes;
         }
     }
 ?>

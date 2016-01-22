@@ -10,6 +10,9 @@
         private $usuario;
         private $pass;
         private $db;
+        private $port;
+        private $trans;
+        private $isTrans;
 
         #Contructor - destructor
         public  function __construct()
@@ -18,6 +21,9 @@
             $this->usuario = "root";
             $this->pass = "root";
             $this->db = "dbventas";
+            $this->port = 3306;
+            $this->isTrans = false;//Verifica si se a activado una transaccion o no
+            $this->trans = null;
         }
         public function __destruct()
         {}
@@ -48,7 +54,14 @@
         //devuelve TRUE en caso de éxito o FALSE en caso de error.
         private function consultar($sql)
         {
-            $result = mysql_query($sql, $this->conexion) or die('Consulta fallida: ' . mysql_error());
+            if($this->isTrans)
+            {
+                $result = $this->trans->query($sql);
+            }
+            else
+            {
+                $result = mysql_query($sql, $this->conexion) or die('Consulta fallida: ' . mysql_error());
+            }
             return $result;
         }
         //Funcion que retorna un array ordenado de un conjunt de resultado
@@ -64,18 +77,64 @@
         }
 
         #Metodos Publicos
+        //Cierra una conexión previamente abierta a una base de datos
+        public function cerrarTransaccion()
+        {
+            $this->trans->close();
+            $this->isTrans = false;
+        }
+        //Revierte la transacción actual
+        public function revertirTransaccion()
+        {
+            $this->trans->rollback();
+        }
+        //Consigna la transacción actual
+        public function confirmarTransaccion()
+        {
+            return $this->trans->commit();
+        }
+        //Inicia una nueva Transaccion
+        public function iniciarTransaccion()
+        {
+            $this->trans = new mysqli($this->servidor, 
+                $this->usuario, $this->pass, $this->db, $this->port);
+            if ($this->trans->connect_errno)
+            {
+                echo "Fallo al conectar a MySQL: (" . $this->trans->connect_errno . ") " . $this->trans->connect_error;
+            }
+            else
+            {
+                $this->isTrans = $this->trans->begin_transaction(MYSQLI_TRANS_START_READ_ONLY);
+                if($this->isTrans)
+                {
+                    $this->trans->autocommit(false);
+                    return $this->isTrans;
+                }
+                else
+                {
+                    echo "No se pudo iniciar la transaccion";
+                    return $this->isTrans;
+                }
+            }
+        }
         //Funcion que retorna TRUE en caso de éxito
         //o FALSE en caso de error.
         public function ejecutar($sql)
         {
-            //Abrimos una conexion a una base de datos MySql.
-            $this->openConexion();
-            //Ejecutamos una consulta sql de tipo Insert, Update o Delete
-            //en la base de datos MySql.
-            $result = $this->consultar($sql);
-            //Cerramos la conexion a la base datos MySql.
-            $this->closeConexion();
-
+            if ($this->isTrans)
+            {
+                $result = $this->consultar($sql);
+            }
+            else
+            {
+                //Abrimos una conexion a una base de datos MySql.
+                $this->openConexion();
+                //Ejecutamos una consulta sql de tipo Insert, Update o Delete
+                //en la base de datos MySql.
+                $result = $this->consultar($sql);
+                //Cerramos la conexion a la base datos MySql.
+                $this->closeConexion();
+            }
             return $result;
         }
         //Funcion que retorna con conjunto de resultado en caso de éxito,

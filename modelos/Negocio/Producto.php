@@ -22,7 +22,6 @@
         {
             return $this->idProducto;
         }
-
         public function setNombre($nombre)
         {
             $this->nombre = $nombre;
@@ -31,7 +30,6 @@
         {
             return $this->nombre;
         }
-
         public function setStock($stock)
         {
             $this->stock = $stock;
@@ -50,7 +48,7 @@
         }
 
         #Contructor - Destructor
-        function __construct()
+        public function __construct()
         {
             $this->idProducto = 0;
             $this->nombre = "";
@@ -115,6 +113,7 @@
         {
             $sql = "select idProducto,nombre,stock,precio
                     from producto order by nombre asc";
+            
             $listaProductos = $this->getListaProducto($this->aDatos->getDatos($sql));
             return $listaProductos;
         }
